@@ -48,4 +48,14 @@ class User extends Authenticatable
     {
         return $this->role === self::ROLE_CUSTOMER;
     }
+    
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function assignedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'assigned_to');
+    }
 }
