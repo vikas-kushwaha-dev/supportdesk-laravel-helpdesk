@@ -48,7 +48,7 @@ class User extends Authenticatable
     {
         return $this->role === self::ROLE_CUSTOMER;
     }
-    
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
@@ -57,5 +57,10 @@ class User extends Authenticatable
     public function assignedTickets()
     {
         return $this->hasMany(Ticket::class, 'assigned_to');
+    }
+
+    public function ticketComments()
+    {
+        return $this->hasMany(TicketComment::class);
     }
 }

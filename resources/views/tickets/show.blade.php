@@ -11,6 +11,26 @@
         <p><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}</p>
         <p><strong>Category:</strong> {{ $ticket->category ?? '-' }}</p>
         <p><strong>Created By:</strong> {{ $ticket->user->name }}</p>
+        <hr>
+
+        <h3>Comments</h3>
+
+        <form method="POST" action="{{ route('tickets.comments.store', $ticket) }}">
+            @csrf
+
+            <textarea name="message" rows="4" required></textarea>
+            @error('message') <p>{{ $message }}</p> @enderror
+
+            <button type="submit">Add Comment</button>
+        </form>
+
+        @foreach($ticket->comments as $comment)
+        <div style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+            <strong>{{ $comment->user->name }}</strong>
+            <small>{{ $comment->created_at->diffForHumans() }}</small>
+            <p>{{ $comment->message }}</p>
+        </div>
+        @endforeach
 
         <a href="{{ route('tickets.index') }}">Back</a>
     </div>
