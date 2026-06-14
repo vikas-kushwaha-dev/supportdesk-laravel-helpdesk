@@ -32,6 +32,28 @@
         </div>
         @endforeach
 
+        <hr>
+
+        <h3>Attachments</h3>
+
+        <form method="POST" action="{{ route('tickets.attachments.store', $ticket) }}" enctype="multipart/form-data">
+            @csrf
+
+            <input type="file" name="attachment" required>
+            @error('attachment') <p>{{ $message }}</p> @enderror
+
+            <button type="submit">Upload</button>
+        </form>
+
+        @foreach($ticket->attachments as $attachment)
+        <div style="margin-top: 10px;">
+            <a href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank">
+                {{ $attachment->file_name }}
+            </a>
+            <small>Uploaded by {{ $attachment->user->name }}</small>
+        </div>
+        @endforeach
+
         <a href="{{ route('tickets.index') }}">Back</a>
     </div>
 </x-app-layout>
