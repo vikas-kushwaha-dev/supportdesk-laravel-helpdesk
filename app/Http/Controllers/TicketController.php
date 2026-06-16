@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Services\TicketAiService;
 
 class TicketController extends Controller
 {
@@ -36,11 +37,11 @@ class TicketController extends Controller
         return view('tickets.create');
     }
 
-    public function store(StoreTicketRequest $request)
+    public function store(StoreTicketRequest $request, TicketAiService $ticketAiService)
     {
         $this->authorize('create', Ticket::class);
 
-        Ticket::create([
+        $ticket = Ticket::create([
             'ticket_no' => 'TKT-' . strtoupper(Str::random(8)),
             'user_id' => Auth::id(),
             'subject' => $request->subject,
@@ -50,6 +51,10 @@ class TicketController extends Controller
             'status' => 'open',
         ]);
 
+        $ticket->aiInsight()->create(
+            $ticketAiService->analyse($ticket)
+        );
+
         return redirect()
             ->route('tickets.index')
             ->with('success', 'Ticket created successfully.');
@@ -58,7 +63,7 @@ class TicketController extends Controller
     public function show(Ticket $ticket)
     {
         $this->authorize('view', $ticket);
-        $ticket->load(['user', 'assignedAgent', 'comments.user', 'attachments.user']);
+        $ticket->load(['user', 'assignedAgent', 'comments.user', 'attachments.user', 'aiInsight']);
         return view('tickets.show', compact('ticket'));
     }
 

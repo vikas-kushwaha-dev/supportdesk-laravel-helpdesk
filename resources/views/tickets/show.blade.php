@@ -54,6 +54,20 @@
         </div>
         @endforeach
 
+        @if($ticket->aiInsight)
+        <hr>
+
+        <h3>AI Ticket Insight</h3>
+
+        <p><strong>Suggested Priority:</strong> {{ ucfirst($ticket->aiInsight->suggested_priority) }}</p>
+        <p><strong>Suggested Category:</strong> {{ $ticket->aiInsight->suggested_category }}</p>
+        <p><strong>Sentiment:</strong> {{ ucfirst($ticket->aiInsight->sentiment) }}</p>
+        <p><strong>Summary:</strong> {{ $ticket->aiInsight->summary }}</p>
+        <p><strong>Recommended Action:</strong> {{ $ticket->aiInsight->recommended_action }}</p>
+        <p><strong>Confidence:</strong> {{ $ticket->aiInsight->confidence_score }}%</p>
+        <p><strong>Model:</strong> {{ $ticket->aiInsight->ai_model }}</p>
+        @endif
+
         <a href="{{ route('tickets.index') }}">Back</a>
     </div>
 </x-app-layout>
