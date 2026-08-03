@@ -1,58 +1,147 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SupportDesk
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SupportDesk is a Laravel helpdesk ticketing system built as a portfolio project for real-world IT support workflows. It lets customers create support tickets, agents manage assigned tickets, and admins oversee the ticket queue.
 
-## About Laravel
+## Current Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel 13 application with Breeze authentication.
+- Role-based users: admin, agent, and customer.
+- Ticket creation, listing, editing, viewing, and deletion.
+- Ticket priorities: low, medium, high, and urgent.
+- Ticket statuses: open, in progress, resolved, and closed.
+- Customer-scoped ticket access through Laravel policies.
+- Agent-scoped assigned ticket access.
+- Ticket comments.
+- Ticket file attachments.
+- Rule-based ticket AI insights for suggested priority, category, sentiment, summary, and recommended action.
+- Admin action to apply AI-suggested priority and category to a ticket.
+- MySQL-ready Docker/Sail setup.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Planned Portfolio Roadmap
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+This project follows the SupportDesk build plan from the portfolio discussion:
 
-## Learning Laravel
+1. Authentication and roles.
+2. Ticket module.
+3. Comments and attachments.
+4. Staff/agent ticket management.
+5. Admin ticket assignment.
+6. Departments and categories.
+7. Status history logs.
+8. Email notifications.
+9. Search and filters.
+10. SLA due dates and overdue ticket checks.
+11. Reports and analytics.
+12. Feature tests.
+13. Seeded demo data.
+14. Screenshots and deployment notes.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Tech Stack
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.3
+- Laravel 13
+- MySQL
+- Laravel Breeze
+- Laravel Sail
+- Blade
+- Tailwind CSS
+- Vite
+- PHPUnit
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Setup
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Install PHP and Node dependencies:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+npm install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Copy the environment file and generate the app key:
 
-## Contributing
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Configure the database in `.env`. For Sail, the project expects:
 
-## Code of Conduct
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=supportdesk
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Start the Docker environment:
 
-## Security Vulnerabilities
+```bash
+./vendor/bin/sail up -d
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Run migrations:
 
-## License
+```bash
+./vendor/bin/sail artisan migrate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Build frontend assets:
+
+```bash
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
+```
+
+Open the app at:
+
+```text
+http://localhost
+```
+
+## Useful Commands
+
+Run tests:
+
+```bash
+./vendor/bin/sail artisan test
+```
+
+Run migrations:
+
+```bash
+./vendor/bin/sail artisan migrate
+```
+
+Create the storage symlink for attachments:
+
+```bash
+./vendor/bin/sail artisan storage:link
+```
+
+Format PHP code:
+
+```bash
+./vendor/bin/pint
+```
+
+## Demo Accounts
+
+Demo seeders are still planned. Recommended accounts to add:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | admin@example.com | password |
+| Agent | agent@example.com | password |
+| Customer | customer@example.com | password |
+
+## Next Best Tasks
+
+The app already covers the foundation from the original plan. The strongest next steps are:
+
+1. Add feature tests for AI insight creation and applying AI suggestions.
+2. Add admin assignment screens so admins can assign tickets to agents.
+3. Add search and filters for status, priority, category, assigned agent, and keyword.
+4. Add ticket status history logs.
+5. Add seeders for demo accounts and example tickets.

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ticket;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Ticket;
 use App\Services\TicketAiService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -34,6 +33,7 @@ class TicketController extends Controller
     public function create()
     {
         $this->authorize('create', Ticket::class);
+
         return view('tickets.create');
     }
 
@@ -42,7 +42,7 @@ class TicketController extends Controller
         $this->authorize('create', Ticket::class);
 
         $ticket = Ticket::create([
-            'ticket_no' => 'TKT-' . strtoupper(Str::random(8)),
+            'ticket_no' => 'TKT-'.strtoupper(Str::random(8)),
             'user_id' => Auth::id(),
             'subject' => $request->subject,
             'description' => $request->description,
@@ -64,12 +64,14 @@ class TicketController extends Controller
     {
         $this->authorize('view', $ticket);
         $ticket->load(['user', 'assignedAgent', 'comments.user', 'attachments.user', 'aiInsight']);
+
         return view('tickets.show', compact('ticket'));
     }
 
     public function edit(Ticket $ticket)
     {
         $this->authorize('update', $ticket);
+
         return view('tickets.edit', compact('ticket'));
     }
 
@@ -88,6 +90,22 @@ class TicketController extends Controller
         return redirect()
             ->route('tickets.index')
             ->with('success', 'Ticket updated successfully.');
+    }
+
+    public function applyAiSuggestion(Ticket $ticket)
+    {
+        abort_unless(Auth::user()->isAdmin(), 403);
+
+        if (! $ticket->aiInsight) {
+            return back()->with('error', 'No AI insight available for this ticket.');
+        }
+
+        $ticket->update([
+            'priority' => $ticket->aiInsight->suggested_priority,
+            'category' => $ticket->aiInsight->suggested_category,
+        ]);
+
+        return back()->with('success', 'AI suggestion applied successfully.');
     }
 
     public function destroy(Ticket $ticket)

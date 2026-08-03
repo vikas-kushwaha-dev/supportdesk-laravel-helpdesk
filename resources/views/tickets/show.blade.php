@@ -4,6 +4,14 @@
     </x-slot>
 
     <div class="p-6">
+        @if(session('success'))
+            <p>{{ session('success') }}</p>
+        @endif
+
+        @if(session('error'))
+            <p>{{ session('error') }}</p>
+        @endif
+
         <p><strong>Ticket No:</strong> {{ $ticket->ticket_no }}</p>
         <p><strong>Subject:</strong> {{ $ticket->subject }}</p>
         <p><strong>Description:</strong> {{ $ticket->description }}</p>
@@ -66,6 +74,15 @@
         <p><strong>Recommended Action:</strong> {{ $ticket->aiInsight->recommended_action }}</p>
         <p><strong>Confidence:</strong> {{ $ticket->aiInsight->confidence_score }}%</p>
         <p><strong>Model:</strong> {{ $ticket->aiInsight->ai_model }}</p>
+
+        @if(auth()->user()->isAdmin())
+            <form method="POST" action="{{ route('tickets.apply-ai-suggestion', $ticket) }}">
+                @csrf
+                @method('PATCH')
+
+                <button type="submit">Apply AI Suggestion</button>
+            </form>
+        @endif
         @endif
 
         <a href="{{ route('tickets.index') }}">Back</a>

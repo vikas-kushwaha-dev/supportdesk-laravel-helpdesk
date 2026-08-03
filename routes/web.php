@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketAttachmentController;
-use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketCommentController;
+use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,10 +21,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::patch('/tickets/{ticket}/apply-ai-suggestion', [TicketController::class, 'applyAiSuggestion'])
+        ->name('tickets.apply-ai-suggestion');
+
     Route::resource('tickets', TicketController::class);
 
     Route::post('/tickets/{ticket}/comments', [TicketCommentController::class, 'store'])->name('tickets.comments.store');
     Route::post('/tickets/{ticket}/attachments', [TicketAttachmentController::class, 'store'])->name('tickets.attachments.store');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
