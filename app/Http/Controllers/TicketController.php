@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Models\Ticket;
+use App\Models\User;
 use App\Services\TicketAiService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class TicketController extends Controller
 {
@@ -64,8 +67,12 @@ class TicketController extends Controller
     {
         $this->authorize('view', $ticket);
         $ticket->load(['user', 'assignedAgent', 'comments.user', 'attachments.user', 'aiInsight']);
+        $agents = User::query()
+            ->where('role', User::ROLE_AGENT)
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
 
-        return view('tickets.show', compact('ticket'));
+        return view('tickets.show', compact('agents', 'ticket'));
     }
 
     public function edit(Ticket $ticket)
@@ -106,6 +113,24 @@ class TicketController extends Controller
         ]);
 
         return back()->with('success', 'AI suggestion applied successfully.');
+    }
+
+    public function assignAgent(Request $request, Ticket $ticket)
+    {
+        abort_unless(Auth::user()->isAdmin(), 403);
+
+        $validated = $request->validate([
+            'assigned_to' => [
+                'nullable',
+                Rule::exists('users', 'id')->where('role', User::ROLE_AGENT),
+            ],
+        ]);
+
+        $ticket->update([
+            'assigned_to' => $validated['assigned_to'] ?? null,
+        ]);
+
+        return back()->with('success', 'Ticket assignment updated successfully.');
     }
 
     public function destroy(Ticket $ticket)

@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::patch('/tickets/{ticket}/apply-ai-suggestion', [TicketController::class, 'applyAiSuggestion'])
         ->name('tickets.apply-ai-suggestion');
+    Route::patch('/tickets/{ticket}/assignment', [TicketController::class, 'assignAgent'])
+        ->name('tickets.assignment.update');
 
     Route::resource('tickets', TicketController::class);
 

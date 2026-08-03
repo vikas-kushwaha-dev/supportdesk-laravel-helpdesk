@@ -19,6 +19,32 @@
         <p><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}</p>
         <p><strong>Category:</strong> {{ $ticket->category ?? '-' }}</p>
         <p><strong>Created By:</strong> {{ $ticket->user->name }}</p>
+        <p><strong>Assigned Agent:</strong> {{ $ticket->assignedAgent?->name ?? 'Unassigned' }}</p>
+
+        @if(auth()->user()->isAdmin())
+            <hr>
+
+            <h3>Assign Ticket</h3>
+
+            <form method="POST" action="{{ route('tickets.assignment.update', $ticket) }}">
+                @csrf
+                @method('PATCH')
+
+                <label for="assigned_to">Agent</label>
+                <select id="assigned_to" name="assigned_to">
+                    <option value="">Unassigned</option>
+                    @foreach($agents as $agent)
+                        <option value="{{ $agent->id }}" @selected((int) old('assigned_to', $ticket->assigned_to) === $agent->id)>
+                            {{ $agent->name }} ({{ $agent->email }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('assigned_to') <p>{{ $message }}</p> @enderror
+
+                <button type="submit">Update Assignment</button>
+            </form>
+        @endif
+
         <hr>
 
         <h3>Comments</h3>
