@@ -68,6 +68,27 @@
 
         <hr>
 
+        <h3>Status History</h3>
+
+        @forelse($ticket->statusLogs->sortByDesc('created_at') as $statusLog)
+            <div style="border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
+                <p>
+                    <strong>{{ ucfirst(str_replace('_', ' ', $statusLog->old_status ?? 'none')) }}</strong>
+                    to
+                    <strong>{{ ucfirst(str_replace('_', ' ', $statusLog->new_status)) }}</strong>
+                </p>
+                <p>{{ $statusLog->note }}</p>
+                <small>
+                    Changed by {{ $statusLog->changedBy?->name ?? 'System' }}
+                    {{ $statusLog->created_at->diffForHumans() }}
+                </small>
+            </div>
+        @empty
+            <p>No status history yet.</p>
+        @endforelse
+
+        <hr>
+
         <h3>Attachments</h3>
 
         <form method="POST" action="{{ route('tickets.attachments.store', $ticket) }}" enctype="multipart/form-data">

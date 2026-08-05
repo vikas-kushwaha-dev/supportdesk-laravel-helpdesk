@@ -104,7 +104,14 @@ class TicketController extends Controller
     public function show(Ticket $ticket)
     {
         $this->authorize('view', $ticket);
-        $ticket->load(['user', 'assignedAgent', 'comments.user', 'attachments.user', 'aiInsight']);
+        $ticket->load([
+            'user',
+            'assignedAgent',
+            'comments.user',
+            'attachments.user',
+            'aiInsight',
+            'statusLogs.changedBy',
+        ]);
         $agents = User::query()
             ->where('role', User::ROLE_AGENT)
             ->orderBy('name')
