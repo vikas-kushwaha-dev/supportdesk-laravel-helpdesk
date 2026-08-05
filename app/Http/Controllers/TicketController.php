@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 
 class TicketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Ticket::class);
 
@@ -28,9 +28,47 @@ class TicketController extends Controller
             $query->where('assigned_to', auth()->id());
         }
 
-        $tickets = $query->latest()->paginate(10);
+        $filters = $request->only(['assigned_to', 'category', 'priority', 'search', 'status']);
 
-        return view('tickets.index', compact('tickets'));
+        if (in_array($filters['status'] ?? null, ['open', 'in_progress', 'resolved', 'closed'], true)) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (in_array($filters['priority'] ?? null, ['low', 'medium', 'high', 'urgent'], true)) {
+            $query->where('priority', $filters['priority']);
+        }
+
+        if (filled($filters['category'] ?? null)) {
+            $query->where('category', $filters['category']);
+        }
+
+        if (filled($filters['assigned_to'] ?? null) && Auth::user()->isAdmin()) {
+            $query->where('assigned_to', $filters['assigned_to']);
+        }
+
+        if (filled($filters['search'] ?? null)) {
+            $query->where(function ($query) use ($filters) {
+                $search = $filters['search'];
+
+                $query
+                    ->where('ticket_no', 'like', "%{$search}%")
+                    ->orWhere('subject', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $tickets = $query->latest()->paginate(10)->withQueryString();
+        $agents = User::query()
+            ->where('role', User::ROLE_AGENT)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+        $categories = Ticket::query()
+            ->whereNotNull('category')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category');
+
+        return view('tickets.index', compact('agents', 'categories', 'filters', 'tickets'));
     }
 
     public function create()
