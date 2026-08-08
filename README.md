@@ -18,6 +18,7 @@ SupportDesk is a Laravel helpdesk ticketing system built as a portfolio project 
 - Ticket status history logs.
 - Rule-based ticket AI insights for suggested priority, category, sentiment, summary, and recommended action.
 - Admin action to apply AI-suggested priority and category to a ticket.
+- Demo users and tickets for portfolio review.
 - MySQL-ready Docker/Sail setup.
 
 ## Planned Portfolio Roadmap
@@ -84,10 +85,11 @@ Start the Docker environment:
 ./vendor/bin/sail up -d
 ```
 
-Run migrations:
+Run migrations and seed demo data:
 
 ```bash
 ./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan db:seed
 ```
 
 Build frontend assets:
@@ -131,8 +133,6 @@ Format PHP code:
 
 ## Demo Accounts
 
-Demo seeders are still planned. Recommended accounts to add:
-
 | Role | Email | Password |
 | --- | --- | --- |
 | Admin | admin@example.com | password |
@@ -143,8 +143,8 @@ Demo seeders are still planned. Recommended accounts to add:
 
 The app already covers the foundation from the original plan. The strongest next steps are:
 
-1. Add seeders for demo accounts and example tickets.
-2. Add reports and analytics dashboard.
-3. Add screenshots and deployment notes.
-4. Improve ticket page UI polish.
-5. Add SLA due dates and overdue ticket checks.
+1. Add reports and analytics dashboard.
+2. Add screenshots and deployment notes.
+3. Improve ticket page UI polish.
+4. Add SLA due dates and overdue ticket checks.
+5. Add email notifications for ticket events.
